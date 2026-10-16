@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Verify 2FA</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 50px; text-align: center; }
+        .container { max-width: 400px; margin: auto; padding: 20px; border: 1px solid #ccc; border-radius: 5px; }
+        input { padding: 10px; font-size: 16px; width: 150px; text-align: center; margin: 10px 0; }
+        button { padding: 10px 20px; background-color: #28a745; color: white; border: none; cursor: pointer; }
+        .message { color: red; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Two-Factor Authentication</h2>
+        <p>Enter the 6-digit code from your authenticator app.</p>
+        
+        {% if message %}
+            <p class="message">{{ message }}</p>
+        {% endif %}
+
+        <form method="POST" action="/verify_2fa">
+            <input type="text" name="code" placeholder="000000" required maxlength="6">
+            <br>
+            <button type="submit">Verify Code</button>
+        </form>
+    </div>
+</body>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Schedule Appointment</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 50px; }
+        .container { max-width: 450px; margin: auto; padding: 20px; border: 1px solid #ccc; border-radius: 5px; }
+        input, select, textarea { width: 100%; padding: 8px; margin: 10px 0; box-sizing: border-box; }
+        button { width: 100%; padding: 10px; background-color: #6f42c1; color: white; border: none; cursor: pointer; }
+        .back-btn { display: block; text-align: center; margin-top: 15px; text-decoration: none; color: #007BFF; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2 style="text-align: center;">Schedule an Appointment</h2>
+        <form method="POST" action="/schedule_appointment">
+            
+            <label>Select Patient:</label>
+            <select name="patient_id" required>
+                <option value="">-- Choose Patient --</option>
+                {% for patient in patients %}
+                    <option value="{{ patient[0] }}">{{ patient[1] }}</option>
+                {% endfor %}
+            </select>
+
+            <label>Select Doctor:</label>
+            <select name="doctor_id" required>
+                <option value="">-- Choose Doctor --</option>
+                {% for doctor in doctors %}
+                    <option value="{{ doctor[0] }}">Dr. {{ doctor[1] }}</option>
+                {% endfor %}
+            </select>
+
+            <label>Date & Time:</label>
+            <input type="datetime-local" name="appointment_date" required>
+
+            <label>Reason for Visit:</label>
+            <textarea name="reason" rows="3" required></textarea>
+
+            <button type="submit">Schedule Appointment</button>
+        </form>
+        <a href="/dashboard" class="back-btn">Back to Dashboard</a>
+    </div>
+</body>
+</html>

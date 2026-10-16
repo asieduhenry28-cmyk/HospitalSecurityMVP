@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Manage Users</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 30px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #fd7e14; color: white; }
+        tr:nth-child(even) { background-color: #f2f2f2; }
+        .btn { padding: 5px 10px; color: white; text-decoration: none; border-radius: 3px; font-size: 12px; }
+        .deactivate { background-color: #ffc107; color: black; }
+        .activate { background-color: #28a745; }
+        .delete { background-color: #dc3545; }
+        .back-btn { padding: 10px 15px; background-color: #6c757d; color: white; text-decoration: none; border-radius: 5px; display: inline-block; margin-right: 10px;}
+        .deleted-btn { padding: 10px 15px; background-color: #343a40; color: white; text-decoration: none; border-radius: 5px; display: inline-block; }
+    </style>
+</head>
+<body>
+    <h1>User Management</h1>
+    <div>
+        <a href="/dashboard" class="back-btn">Back to Dashboard</a>
+        <a href="/deleted_users" class="deleted-btn">View Deleted Users Archive</a>
+    </div>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>User ID</th>
+                <th>Full Name</th>
+                <th>Username</th>
+                <th>Role</th>
+                <th>Status</th>
+                <th>Created At</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>{{ user[0] }}</td>
+                <td>{{ user[1] }}</td>
+                <td>{{ user[2] }}</td>
+                <td>{{ user[3] }}</td>
+                <td>
+                    {% if user[4] %}
+                        <span style="color: green; font-weight: bold;">Active</span>
+                    {% else %}
+                        <span style="color: red; font-weight: bold;">Deactivated</span>
+                    {% endif %}
+                </td>
+                <td>{{ user[5] }}</td>
+                <td>
+                    <!-- Prevent admin from deactivating/deleting themselves -->
+                    {% if user[0] != session['user_id'] %}
+                        {% if user[4] %}
+                            <a href="/toggle_user/{{ user[0] }}" class="btn deactivate" onclick="return confirm('Deactivate this user?')">Deactivate</a>
+                        {% else %}
+                            <a href="/toggle_user/{{ user[0] }}" class="btn activate">Activate</a>
+                        {% endif %}
+                        <a href="/delete_user/{{ user[0] }}" class="btn delete" onclick="return confirm('Are you sure you want to permanently delete this user? They will be moved to the Deleted Users archive.')">Delete</a>
+                    {% else %}
+                        <em>(You)</em>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

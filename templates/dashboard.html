@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard - Hospital Security</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 50px; text-align: center; background-color: #f4f7f6; }
+        .container { max-width: 900px; margin: auto; padding: 20px; }
+        
+        /* Flash Message Styles */
+        .flash { padding: 15px; margin-bottom: 20px; border-radius: 5px; font-weight: bold; }
+        .flash.success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .flash.error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        
+        /* Stats Cards */
+        .stats-container { display: flex; justify-content: space-around; margin-bottom: 30px; }
+        .stat-card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); width: 28%; }
+        .stat-card h2 { margin: 0; font-size: 36px; color: #007BFF; }
+        .stat-card p { margin: 5px 0 0; color: #555; font-size: 16px; font-weight: bold; }
+        
+        /* Main Dashboard Box */
+        .dashboard-box { background-color: #f9f9f9; padding: 30px; border: 1px solid #ccc; border-radius: 8px; }
+        .btn { padding: 10px 20px; color: white; text-decoration: none; border-radius: 5px; display: inline-block; margin: 5px; font-weight: bold; }
+        .logout-btn { background-color: #dc3545; }
+        .audit-btn { background-color: #17a2b8; }
+        .patient-btn { background-color: #28a745; }
+        .view-btn { background-color: #007BFF; }
+        .appt-btn { background-color: #6f42c1; }
+        .user-btn { background-color: #fd7e14; }
+        .backup-btn { background-color: #343a40; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        
+        <!-- Display Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash {{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <h1>Welcome, {{ username }}!</h1>
+        <h3>Your Role: {{ role }}</h3>
+        
+        <!-- Statistics Cards -->
+        <div class="stats-container">
+            <div class="stat-card">
+                <h2>{{ total_patients }}</h2>
+                <p>Total Patients</p>
+            </div>
+            <div class="stat-card">
+                <h2>{{ total_appointments }}</h2>
+                <p>Total Appointments</p>
+            </div>
+            <div class="stat-card">
+                <h2>{{ total_doctors }}</h2>
+                <p>Active Doctors</p>
+            </div>
+        </div>
+
+        <div class="dashboard-box">
+            <h3>Quick Actions</h3>
+            <br>
+            <a href="/view_patients" class="btn view-btn">View Patients</a>
+            <a href="/view_appointments" class="btn appt-btn">View Appointments</a>
+
+            {% if role in ['admin', 'receptionist'] %}
+                <br><br>
+                <a href="/add_patient" class="btn patient-btn">Register New Patient</a>
+                <a href="/schedule_appointment" class="btn appt-btn">Schedule Appointment</a>
+            {% endif %}
+            
+            {% if role == 'admin' %}
+                <br><br>
+                <a href="/manage_users" class="btn user-btn">Manage Users</a>
+                <a href="/audit_logs" class="btn audit-btn">View Audit Logs</a>
+                <a href="/backup" class="btn backup-btn">Backup & Restore</a>
+            {% endif %}
+            
+            <br><br><br>
+            <a href="/logout" class="btn logout-btn">Logout</a>
+        </div>
+    </div>
+</body>
+</html>

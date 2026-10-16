@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Backup & Restore</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 50px; text-align: center; }
+        .container { max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ccc; border-radius: 5px; background-color: #f9f9f9; }
+        .section { margin-bottom: 40px; padding: 20px; border: 1px solid #ddd; border-radius: 5px; background: white; }
+        .btn { padding: 10px 20px; color: white; text-decoration: none; border-radius: 5px; display: inline-block; margin-top: 10px; border: none; cursor: pointer; font-size: 16px;}
+        .download-btn { background-color: #007BFF; }
+        .upload-btn { background-color: #28a745; }
+        .back-btn { background-color: #6c757d; }
+        input[type="file"] { margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Database Backup & Restore</h1>
+        <a href="/dashboard" class="btn back-btn">Back to Dashboard</a>
+        
+        <div class="section">
+            <h2>Download Backup</h2>
+            <p>Download a complete SQL backup of the hospital database. Keep this file safe!</p>
+            <a href="/download_backup" class="btn download-btn">Download Database Backup</a>
+        </div>
+        
+        <div class="section">
+            <h2>Restore from Backup</h2>
+            <p style="color: red; font-weight: bold;">WARNING: Restoring a backup will overwrite all current data!</p>
+            <form method="POST" action="/restore_backup" enctype="multipart/form-data">
+                <label>Select a .sql backup file:</label><br>
+                <input type="file" name="backup_file" accept=".sql" required>
+                <br>
+                <button type="submit" class="btn upload-btn" onclick="return confirm('Are you sure you want to restore the database? This will overwrite all current data!')">Upload & Restore</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
