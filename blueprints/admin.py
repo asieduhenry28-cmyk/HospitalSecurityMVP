@@ -1,8 +1,5 @@
-from flask import Blueprint, render_template, request, redirect, url_for, session, flash, send_file
-import os
-import subprocess
-from datetime import datetime
-from extensions import get_db_connection, log_action, db_config
+from flask import Blueprint, render_template, request, redirect, url_for, session, flash
+from extensions import get_db_connection, log_action
 
 admin = Blueprint('admin', __name__)
 
@@ -112,75 +109,3 @@ def backup_page():
     if 'user_id' not in session or session.get('role') != 'admin':
         return "Access Denied: Only Admins can access backups.", 403
     return render_template('backup.html')
-
-@admin.route('/download_backup')
-def download_backup():
-    if 'user_id' not in session or session.get('role') != 'admin':
-        return "Access Denied", 403
-    
-    timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    backup_filename = f"hospital_backup_{timestamp}.sql"
-    backup_path = os.path.join(os.getcwd(), backup_filename)
-    
-    try:
-        command = [
-            "mysqldump",
-            f"--host={db_config['host']}",
-            f"--user={db_config['user']}",
-            f"--password={db_config['password']}",
-            db_config['database']
-        ]
-        
-        with open(backup_path, "w") as f:
-            subprocess.run(command, stdout=f, check=True)
-            
-        log_action(session['user_id'], "DATABASE_BACKUP", "Admin downloaded a database backup.", request.remote_addr)
-        return send_file(backup_path, as_attachment=True)
-        
-    except Exception as e:
-        flash(f"Backup Failed: {e}", "error")
-        return redirect(url_for('admin.backup_page'))
-
-@admin.route('/restore_backup', methods=['POST'])
-def restore_backup():
-    if 'user_id' not in session or session.get('role') != 'admin':
-        return "Access Denied", 403
-    
-    if 'backup_file' not in request.files:
-        flash("No file uploaded.", "error")
-        return redirect(url_for('admin.backup_page'))
-        
-    file = request.files['backup_file']
-    if file.filename == '':
-        flash("No file selected.", "error")
-        return redirect(url_for('admin.backup_page'))
-        
-    if file and file.filename.endswith('.sql'):
-        temp_path = os.path.join(os.getcwd(), "temp_restore.sql")
-        file.save(temp_path)
-        
-        try:
-            command = [
-                "mysql",
-                f"--host={db_config['host']}",
-                f"--user={db_config['user']}",
-                f"--password={db_config['password']}",
-                db_config['database']
-            ]
-            
-            with open(temp_path, "r") as f:
-                subprocess.run(command, stdin=f, check=True)
-                
-            os.remove(temp_path)
-            log_action(session['user_id'], "DATABASE_RESTORE", "Admin restored the database from a backup file.", request.remote_addr)
-            flash("Database restored successfully!", "success")
-            return redirect(url_for('main.dashboard'))
-            
-        except Exception as e:
-            if os.path.exists(temp_path):
-                os.remove(temp_path)
-            flash(f"Restore Failed: {e}", "error")
-            return redirect(url_for('admin.backup_page'))
-    else:
-        flash("Invalid file format. Please upload a .sql file.", "error")
-        return redirect(url_for('admin.backup_page'))

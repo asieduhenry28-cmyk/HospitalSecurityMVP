@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Medical Records</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 30px; background-color: #f4f7f6;}
+        .header { display: flex; justify-content: space-between; align-items: center; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px;}
+        .header h1 { margin: 0; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; background: white; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        th { background-color: #007BFF; color: white; }
+        tr:nth-child(even) { background-color: #f2f2f2; }
+        .btn { padding: 10px 15px; color: white; text-decoration: none; border-radius: 5px; display: inline-block; border: none; cursor: pointer;}
+        .back-btn { background-color: #6c757d; }
+        .add-btn { background-color: #28a745; }
+        .flash { padding: 15px; margin-bottom: 20px; border-radius: 5px; font-weight: bold; }
+        .flash.success { background-color: #d4edda; color: #155724; }
+        .flash.error { background-color: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="flash {{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <div class="header">
+        <div>
+            <h1>Medical Records: {{ patient[0] }}</h1>
+            <p>DOB: {{ patient[1] }} | Gender: {{ patient[2] }}</p>
+        </div>
+        <div>
+            <a href="/add_record/{{ patient_id }}" class="btn add-btn">+ Add New Record</a>
+            <a href="/view_patients" class="btn back-btn">Back to Patients</a>
+        </div>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Date Added</th>
+                <th>Doctor</th>
+                <th>Diagnosis</th>
+                <th>Prescription</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in records %}
+            <tr>
+                <td>{{ record[4] }}</td>
+                <td>Dr. {{ record[1] }}</td>
+                <td>{{ record[2] }}</td>
+                <td>{{ record[3] }}</td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="4" style="text-align: center;">No medical records found for this patient.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

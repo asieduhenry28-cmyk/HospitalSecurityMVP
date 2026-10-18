@@ -3,9 +3,14 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import pyotp
 from datetime import datetime, timedelta
 from extensions import get_db_connection, log_action
+from itsdangerous import URLSafeTimedSerializer
+import os
 
-# Create the blueprint
 auth = Blueprint('auth', __name__)
+
+# Setup for password reset tokens
+def get_serializer():
+    return URLSafeTimedSerializer(os.getenv('SECRET_KEY', 'fallback_secret_key'))
 
 @auth.route('/register', methods=['GET', 'POST'])
 def register():
@@ -196,3 +201,74 @@ def logout():
     session.clear()
     flash("You have been logged out.", "success")
     return redirect(url_for('auth.login'))
+
+# --- NEW PASSWORD RESET ROUTES ---
+
+@auth.route('/forgot_password', methods=['GET', 'POST'])
+def forgot_password():
+    if request.method == 'POST':
+        username = request.form['username']
+        
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT user_id FROM users WHERE username = %s", (username,))
+        user = cursor.fetchone()
+        cursor.close()
+        conn.close()
+
+        if user:
+            s = get_serializer()
+            # Token is valid for 1 hour (3600 seconds)
+            token = s.dumps(username, salt='password-reset-salt')
+            reset_link = url_for('auth.reset_password', token=token, _external=True)
+            
+            # In a real app, you would send an email here. We simulate it.
+            log_action(user[0], "PASSWORD_RESET_REQUEST", f"Requested password reset for {username}", request.remote_addr)
+            
+            # THIS IS THE UPDATED LINE WITH THE CLICKABLE LINK
+            flash(f"Simulated Email Sent! <a href='{reset_link}' style='color: #155724; text-decoration: underline; font-weight: bold;'>Click here to reset your password</a>", "success")
+            
+            return redirect(url_for('auth.forgot_password'))
+        else:
+            # Don't reveal if user exists or not for security
+            flash("If that username exists, a reset link has been generated.", "success")
+            return redirect(url_for('auth.forgot_password'))
+
+    return render_template('forgot_password.html')
+
+@auth.route('/reset_password/<token>', methods=['GET', 'POST'])
+def reset_password(token):
+    s = get_serializer()
+    try:
+        # Check if token is valid and not older than 1 hour (3600 seconds)
+        username = s.loads(token, salt='password-reset-salt', max_age=3600)
+    except Exception:
+        flash("The password reset link is invalid or has expired.", "error")
+        return redirect(url_for('auth.login'))
+
+    if request.method == 'POST':
+        new_password = request.form['password']
+        hashed_password = generate_password_hash(new_password)
+
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Update password and reset lockout counters
+        cursor.execute("""
+            UPDATE users 
+            SET password_hash = %s, failed_attempts = 0, lockout_until = NULL 
+            WHERE username = %s
+        """, (hashed_password, username))
+        
+        cursor.execute("SELECT user_id FROM users WHERE username = %s", (username,))
+        user_id = cursor.fetchone()[0]
+        
+        conn.commit()
+        cursor.close()
+        conn.close()
+
+        log_action(user_id, "PASSWORD_RESET_SUCCESS", f"User {username} successfully reset their password.", request.remote_addr)
+        flash("Your password has been updated! You can now log in.", "success")
+        return redirect(url_for('auth.login'))
+
+    return render_template('reset_password.html')

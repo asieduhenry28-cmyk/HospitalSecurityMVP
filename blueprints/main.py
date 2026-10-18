@@ -209,3 +209,78 @@ def update_appointment(appt_id, new_status):
     cursor.close()
     conn.close()
     return redirect(url_for('main.view_appointments'))
+
+# --- NEW MEDICAL RECORDS ROUTES ---
+
+@main.route('/view_records/<int:patient_id>')
+def view_records(patient_id):
+    if 'user_id' not in session:
+        return redirect(url_for('auth.login'))
+    
+    if session.get('role') not in ['doctor', 'admin']:
+        return "Access Denied: Only Doctors and Admins can view medical records.", 403
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    cursor.execute("SELECT full_name, date_of_birth, gender FROM patients WHERE patient_id = %s", (patient_id,))
+    patient = cursor.fetchone()
+    
+    query = """
+        SELECT m.record_id, u.full_name AS doctor_name, m.diagnosis, m.prescription, m.created_at
+        FROM medical_records m
+        JOIN users u ON m.doctor_id = u.user_id
+        WHERE m.patient_id = %s
+        ORDER BY m.created_at DESC
+    """
+    cursor.execute(query, (patient_id,))
+    records = cursor.fetchall()
+    
+    cursor.close()
+    conn.close()
+    
+    if not patient:
+        flash("Patient not found.", "error")
+        return redirect(url_for('main.view_patients'))
+        
+    return render_template('view_records.html', patient=patient, patient_id=patient_id, records=records)
+
+@main.route('/add_record/<int:patient_id>', methods=['GET', 'POST'])
+def add_record(patient_id):
+    if 'user_id' not in session:
+        return redirect(url_for('auth.login'))
+    
+    if session.get('role') not in ['doctor', 'admin']:
+        return "Access Denied: Only Doctors and Admins can add medical records.", 403
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    cursor.execute("SELECT full_name FROM patients WHERE patient_id = %s", (patient_id,))
+    patient = cursor.fetchone()
+    
+    if not patient:
+        cursor.close()
+        conn.close()
+        flash("Patient not found.", "error")
+        return redirect(url_for('main.view_patients'))
+
+    if request.method == 'POST':
+        diagnosis = request.form['diagnosis']
+        prescription = request.form['prescription']
+        doctor_id = session['user_id']
+
+        query = "INSERT INTO medical_records (patient_id, doctor_id, diagnosis, prescription) VALUES (%s, %s, %s, %s)"
+        cursor.execute(query, (patient_id, doctor_id, diagnosis, prescription))
+        conn.commit()
+        
+        log_action(session['user_id'], "MEDICAL_RECORD_ADDED", f"Added medical record for patient: {patient[0]}", request.remote_addr)
+        flash("Medical record added successfully!", "success")
+        
+        cursor.close()
+        conn.close()
+        return redirect(url_for('main.view_records', patient_id=patient_id))
+
+    cursor.close()
+    conn.close()
+    return render_template('add_record.html', patient=patient, patient_id=patient_id)

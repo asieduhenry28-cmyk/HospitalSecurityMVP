@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Medical Record</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 50px; background-color: #f4f7f6;}
+        .container { max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ccc; border-radius: 5px; background: white; }
+        textarea { width: 100%; padding: 10px; margin: 10px 0; box-sizing: border-box; border: 1px solid #ccc; border-radius: 5px; font-family: Arial;}
+        button { width: 100%; padding: 12px; background-color: #28a745; color: white; border: none; cursor: pointer; border-radius: 5px; font-size: 16px;}
+        button:hover { background-color: #218838; }
+        .back-btn { display: block; text-align: center; margin-top: 15px; text-decoration: none; color: #6c757d; }
+        label { font-weight: bold; display: block; margin-top: 15px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2 style="text-align: center;">Add Record for {{ patient[0] }}</h2>
+        <form method="POST">
+            <label>Diagnosis:</label>
+            <textarea name="diagnosis" rows="4" required placeholder="Enter the patient's diagnosis here..."></textarea>
+
+            <label>Prescription / Treatment Plan:</label>
+            <textarea name="prescription" rows="4" placeholder="Enter prescribed medications or treatments..."></textarea>
+
+            <br><br>
+            <button type="submit">Save Medical Record</button>
+        </form>
+        <a href="/view_records/{{ patient_id }}" class="back-btn">Cancel and Go Back</a>
+    </div>
+</body>
+</html>

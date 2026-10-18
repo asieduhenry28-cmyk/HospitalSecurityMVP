@@ -12,6 +12,7 @@
         .search-box { margin-top: 20px; display: flex; gap: 10px; }
         .search-box input { padding: 8px; width: 300px; border: 1px solid #ccc; border-radius: 5px; }
         .search-box button { padding: 8px 15px; background-color: #007BFF; color: white; border: none; border-radius: 5px; cursor: pointer;}
+        .record-btn { padding: 5px 10px; background-color: #17a2b8; color: white; text-decoration: none; border-radius: 3px; font-size: 12px;}
     </style>
 </head>
 <body>
@@ -37,6 +38,9 @@
                 <th>Gender</th>
                 <th>Contact Number</th>
                 <th>Registered At</th>
+                {% if session.get('role') in ['doctor', 'admin'] %}
+                <th>Actions</th>
+                {% endif %}
             </tr>
         </thead>
         <tbody>
@@ -48,6 +52,11 @@
                 <td>{{ patient[3] }}</td>
                 <td>{{ patient[4] }}</td>
                 <td>{{ patient[5] }}</td>
+                {% if session.get('role') in ['doctor', 'admin'] %}
+                <td>
+                    <a href="/view_records/{{ patient[0] }}" class="record-btn">View Records</a>
+                </td>
+                {% endif %}
             </tr>
             {% endfor %}
         </tbody>
