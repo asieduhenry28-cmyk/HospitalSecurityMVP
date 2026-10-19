@@ -2,22 +2,31 @@
 <html>
 <head>
     <title>Login - Hospital Security</title>
+    <!-- THIS LINE MAKES IT WORK ON PHONES -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        body { font-family: Arial, sans-serif; margin: 50px; }
-        .container { max-width: 400px; margin: auto; padding: 20px; border: 1px solid #ccc; border-radius: 5px; }
-        input { width: 100%; padding: 8px; margin: 10px 0; box-sizing: border-box; }
-        button { width: 100%; padding: 10px; background-color: #28a745; color: white; border: none; cursor: pointer; }
+        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f4f7f6;}
+        .container { max-width: 400px; margin: auto; padding: 20px; border: 1px solid #ccc; border-radius: 5px; background: white;}
+        input { width: 100%; padding: 12px; margin: 10px 0; box-sizing: border-box; border: 1px solid #ccc; border-radius: 5px; font-size: 16px;}
+        button { width: 100%; padding: 12px; background-color: #28a745; color: white; border: none; cursor: pointer; border-radius: 5px; font-size: 16px;}
         button:hover { background-color: #218838; }
-        .message { color: red; text-align: center; }
+        .flash { padding: 15px; margin-bottom: 20px; border-radius: 5px; font-weight: bold; text-align: center;}
+        .flash.success { background-color: #d4edda; color: #155724; }
+        .flash.error { background-color: #f8d7da; color: #721c24; }
+        a { display: block; text-align: center; margin-top: 15px; text-decoration: none; color: #007BFF; }
     </style>
 </head>
 <body>
     <div class="container">
         <h2 style="text-align: center;">Login</h2>
         
-        {% if message %}
-            <p class="message">{{ message }}</p>
-        {% endif %}
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash {{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
 
         <form method="POST" action="/login">
             <label>Username:</label>
@@ -28,10 +37,9 @@
 
             <button type="submit">Login</button>
         </form>
-        <p style="text-align: center;"><a href="/register">Don't have an account? Register</a></p>
-                <p style="text-align: center; margin-top: 15px;">
-            <a href="/forgot_password" style="color: #007BFF; text-decoration: none;">Forgot Password?</a>
-        </p>
+        
+        <a href="/register">Don't have an account? Register</a>
+        <a href="/forgot_password">Forgot Password?</a>
     </div>
 </body>
 </html>

@@ -3,7 +3,9 @@ import psycopg2
 from dotenv import load_dotenv
 
 load_dotenv()
-DATABASE_URL = os.getenv('DATABASE_URL')
+
+# Make sure the URL is inside the quotes, and the next line starts on a new line
+DATABASE_URL = "postgresql://hospital_user:3Urp55zHJ2d9mVWIMl321JY1MbUunNMp@dpg-dbai064s728c73aj75v0-a.frankfurt-postgres.render.com/hospital_security_mvp"
 
 conn = psycopg2.connect(DATABASE_URL)
 cursor = conn.cursor()
