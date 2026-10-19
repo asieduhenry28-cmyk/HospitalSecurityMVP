@@ -16,6 +16,7 @@ def dashboard():
     conn = get_db_connection()
     cursor = conn.cursor()
     
+    # Stats
     cursor.execute("SELECT COUNT(*) FROM patients")
     total_patients = cursor.fetchone()[0]
     
@@ -25,6 +26,18 @@ def dashboard():
     cursor.execute("SELECT COUNT(*) FROM users WHERE role = 'doctor' AND is_active = TRUE")
     total_doctors = cursor.fetchone()[0]
     
+    # Fetch 5 recent patients for the dashboard table
+    cursor.execute("SELECT patient_id, full_name, date_of_birth, gender, contact_number FROM patients ORDER BY created_at DESC LIMIT 5")
+    raw_patients = cursor.fetchall()
+    
+    recent_patients = []
+    for p in raw_patients:
+        try:
+            decrypted_contact = cipher_suite.decrypt(p[4].encode()).decode()
+        except Exception:
+            decrypted_contact = p[4]
+        recent_patients.append((p[0], p[1], p[2], p[3], decrypted_contact))
+    
     cursor.close()
     conn.close()
     
@@ -33,7 +46,8 @@ def dashboard():
                            role=session['role'],
                            total_patients=total_patients,
                            total_appointments=total_appointments,
-                           total_doctors=total_doctors)
+                           total_doctors=total_doctors,
+                           recent_patients=recent_patients)
 
 @main.route('/add_patient', methods=['GET', 'POST'])
 def add_patient():
@@ -209,8 +223,6 @@ def update_appointment(appt_id, new_status):
     cursor.close()
     conn.close()
     return redirect(url_for('main.view_appointments'))
-
-# --- NEW MEDICAL RECORDS ROUTES ---
 
 @main.route('/view_records/<int:patient_id>')
 def view_records(patient_id):
