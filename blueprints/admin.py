@@ -15,7 +15,10 @@ def manage_users():
     cursor.close()
     conn.close()
     
-    return render_template('manage_users.html', users=users)
+    return render_template('manage_users.html', 
+                           users=users, 
+                           username=session['username'], 
+                           role=session['role'])
 
 @admin.route('/toggle_user/<int:user_id>')
 def toggle_user(user_id):
@@ -88,7 +91,10 @@ def deleted_users():
     cursor.close()
     conn.close()
     
-    return render_template('deleted_users.html', deleted=deleted)
+    return render_template('deleted_users.html', 
+                           deleted=deleted, 
+                           username=session['username'], 
+                           role=session['role'])
 
 @admin.route('/audit_logs')
 def audit_logs():
@@ -102,10 +108,15 @@ def audit_logs():
     cursor.close()
     conn.close()
     
-    return render_template('audit_logs.html', logs=logs)
+    return render_template('audit_logs.html', 
+                           logs=logs, 
+                           username=session['username'], 
+                           role=session['role'])
 
 @admin.route('/backup')
 def backup_page():
     if 'user_id' not in session or session.get('role') != 'admin':
         return "Access Denied: Only Admins can access backups.", 403
-    return render_template('backup.html')
+    return render_template('backup.html', 
+                           username=session['username'], 
+                           role=session['role'])
