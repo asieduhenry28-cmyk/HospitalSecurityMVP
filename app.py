@@ -1,4 +1,4 @@
-from flask import Flask, request, session, redirect, url_for, flash
+from flask import Flask, request, session, redirect, url_for, flash, send_from_directory
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
 import os
@@ -18,11 +18,15 @@ app.register_blueprint(auth)
 app.register_blueprint(main)
 app.register_blueprint(admin)
 
+# --- SERVICE WORKER ROUTE FOR PWA ---
+@app.route('/service-worker.js')
+def service_worker():
+    return send_from_directory(app.static_folder, 'service-worker.js')
+
 # --- SESSION TIMEOUT CHECK ---
 @app.before_request
 def check_session_timeout():
-    # Notice how the allowed routes now have the blueprint name prefix!
-    allowed_routes = ['auth.login', 'auth.register', 'static', 'auth.setup_2fa', 'auth.verify_2fa']
+    allowed_routes = ['auth.login', 'auth.register', 'static', 'auth.setup_2fa', 'auth.verify_2fa', 'service_worker']
     
     if request.endpoint in allowed_routes:
         return
@@ -42,5 +46,3 @@ def check_session_timeout():
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
-    
-    
