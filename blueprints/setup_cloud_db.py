@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Make sure the URL is inside the quotes, and the next line starts on a new line
-DATABASE_URL = "postgresql://hospital_user:3Urp55zHJ2d9mVWIMl321JY1MbUunNMp@dpg-dbai064s728c73aj75v0-a.frankfurt-postgres.render.com/hospital_security_mvp"
+DATABASE_URL = "postgresql://neondb_owner:npg_zQtGSW38ybuZ@ep-morning-forest-bahb9go6-pooler.c-8.eu-central-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
 
 conn = psycopg2.connect(DATABASE_URL)
 cursor = conn.cursor()
