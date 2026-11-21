@@ -160,7 +160,7 @@
             <p class="text-muted mb-0">Here is what's happening at the hospital today.</p>
         </div>
         <div class="text-end d-none d-md-block">
-           <div class="text-muted fw-bold"><i class="fa-regular fa-calendar me-2"></i> {{ current_date }}</div>
+            <div class="text-muted fw-bold"><i class="fa-regular fa-calendar me-2"></i> {{ current_date }}</div>
         </div>
     </div>
 
@@ -305,14 +305,17 @@
         </div>
     </div>
     
-    <!-- Charts Row -->
+    <!-- Charts Row (FIXED HEIGHT) -->
     <div class="row mt-2">
         <div class="col-md-6">
             <div class="widget-card">
                 <div class="widget-title">
                     <span><i class="fa-solid fa-chart-pie text-primary me-2"></i> Patient Demographics</span>
                 </div>
-                <canvas id="genderChart" height="200"></canvas>
+                <!-- The wrapper div below stops the infinite stretching bug -->
+                <div style="position: relative; height: 300px; width: 100%;">
+                    <canvas id="genderChart"></canvas>
+                </div>
             </div>
         </div>
         <div class="col-md-6">
@@ -320,7 +323,10 @@
                 <div class="widget-title">
                     <span><i class="fa-solid fa-chart-bar text-success me-2"></i> Appointment Status</span>
                 </div>
-                <canvas id="apptChart" height="200"></canvas>
+                <!-- The wrapper div below stops the infinite stretching bug -->
+                <div style="position: relative; height: 300px; width: 100%;">
+                    <canvas id="apptChart"></canvas>
+                </div>
             </div>
         </div>
     </div>
@@ -349,10 +355,10 @@
         options: { 
             responsive: true, 
             maintainAspectRatio: false,
-            cutout: '65%', // Makes it look like a nice ring
+            cutout: '65%',
             plugins: { 
                 legend: { 
-                    position: 'right', // Moves legend to the right for a cleaner look
+                    position: 'right',
                     labels: { usePointStyle: true, boxWidth: 8, font: {family: 'Inter', size: 13} } 
                 } 
             } 
@@ -372,14 +378,14 @@
             datasets: [{
                 label: 'Appointments',
                 data: apptCounts,
-                backgroundColor: ['#10b981', '#f59e0b', '#ef4444'], // Green, Yellow, Red
+                backgroundColor: ['#10b981', '#f59e0b', '#ef4444'],
                 borderRadius: 6,
-                barThickness: 50 // Controls the width of the bars so they don't get massive
+                barThickness: 50
             }]
         },
         options: { 
             responsive: true, 
-            maintainAspectRatio: false, // Prevents the giant bar issue
+            maintainAspectRatio: false,
             plugins: { legend: { display: false } },
             scales: { 
                 y: { 
