@@ -5,10 +5,12 @@ from datetime import datetime, timedelta
 from extensions import get_db_connection, log_action
 from itsdangerous import URLSafeTimedSerializer
 import os
+import qrcode
+import io
+import base64
 
 auth = Blueprint('auth', __name__)
 
-# Setup for password reset tokens
 def get_serializer():
     return URLSafeTimedSerializer(os.getenv('SECRET_KEY', 'fallback_secret_key'))
 
@@ -152,11 +154,41 @@ def setup_2fa():
             flash("2FA setup complete! Welcome to your dashboard.", "success")
             return redirect(url_for('main.dashboard'))
         else:
+            # Regenerate QR code for the page if verification fails
+            username = session['pre_2fa_user']['username']
+            totp = pyotp.TOTP(secret)
+            uri = totp.provisioning_uri(name=username, issuer_name="Hospital Security MVP")
+            qr = qrcode.QRCode(version=1, box_size=8, border=2)
+            qr.add_data(uri)
+            qr.make(fit=True)
+            img = qr.make_image(fill_color="black", back_color="white")
+            buf = io.BytesIO()
+            img.save(buf, format="PNG")
+            qr_b64 = base64.b64encode(buf.getvalue()).decode('utf-8')
+            
             flash("Invalid code. Please try again.", "error")
-            return render_template('setup_2fa.html', secret=secret)
+            return render_template('setup_2fa.html', secret=secret, qr_b64=qr_b64)
 
+    # GET Request: Generate new secret and QR Code
     new_secret = pyotp.random_base32()
-    return render_template('setup_2fa.html', secret=new_secret)
+    username = session['pre_2fa_user']['username']
+    
+    # Create the otpauth URI
+    totp = pyotp.TOTP(new_secret)
+    uri = totp.provisioning_uri(name=username, issuer_name="Hospital Security MVP")
+    
+    # Generate the QR Code image
+    qr = qrcode.QRCode(version=1, box_size=8, border=2)
+    qr.add_data(uri)
+    qr.make(fit=True)
+    img = qr.make_image(fill_color="black", back_color="white")
+    
+    # Convert image to Base64 string to embed in HTML
+    buf = io.BytesIO()
+    img.save(buf, format="PNG")
+    qr_b64 = base64.b64encode(buf.getvalue()).decode('utf-8')
+    
+    return render_template('setup_2fa.html', secret=new_secret, qr_b64=qr_b64)
 
 @auth.route('/verify_2fa', methods=['GET', 'POST'])
 def verify_2fa():
@@ -202,8 +234,6 @@ def logout():
     flash("You have been logged out.", "success")
     return redirect(url_for('auth.login'))
 
-# --- NEW PASSWORD RESET ROUTES ---
-
 @auth.route('/forgot_password', methods=['GET', 'POST'])
 def forgot_password():
     if request.method == 'POST':
@@ -218,19 +248,13 @@ def forgot_password():
 
         if user:
             s = get_serializer()
-            # Token is valid for 1 hour (3600 seconds)
             token = s.dumps(username, salt='password-reset-salt')
             reset_link = url_for('auth.reset_password', token=token, _external=True)
             
-            # In a real app, you would send an email here. We simulate it.
             log_action(user[0], "PASSWORD_RESET_REQUEST", f"Requested password reset for {username}", request.remote_addr)
-            
-            # THIS IS THE UPDATED LINE WITH THE CLICKABLE LINK
             flash(f"Simulated Email Sent! <a href='{reset_link}' style='color: #155724; text-decoration: underline; font-weight: bold;'>Click here to reset your password</a>", "success")
-            
             return redirect(url_for('auth.forgot_password'))
         else:
-            # Don't reveal if user exists or not for security
             flash("If that username exists, a reset link has been generated.", "success")
             return redirect(url_for('auth.forgot_password'))
 
@@ -240,7 +264,6 @@ def forgot_password():
 def reset_password(token):
     s = get_serializer()
     try:
-        # Check if token is valid and not older than 1 hour (3600 seconds)
         username = s.loads(token, salt='password-reset-salt', max_age=3600)
     except Exception:
         flash("The password reset link is invalid or has expired.", "error")
@@ -253,7 +276,6 @@ def reset_password(token):
         conn = get_db_connection()
         cursor = conn.cursor()
         
-        # Update password and reset lockout counters
         cursor.execute("""
             UPDATE users 
             SET password_hash = %s, failed_attempts = 0, lockout_until = NULL 

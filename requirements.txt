@@ -5,3 +5,4 @@ pyotp
 cryptography
 Werkzeug
 gunicorn
+qrcode[pil]
