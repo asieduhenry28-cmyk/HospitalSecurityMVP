@@ -59,11 +59,12 @@
     <a href="/view_patients"><i class="fa-solid fa-users"></i> Patients</a>
     <a href="/view_appointments"><i class="fa-solid fa-calendar-check"></i> Appointments</a>
     
-    {% if role == 'admin' %}
+        {% if role == 'admin' %}
         <hr style="border-color: #2d3748; margin: 10px 20px;">
         <a href="/manage_users"><i class="fa-solid fa-user-shield"></i> Manage Users</a>
         <a href="/audit_logs"><i class="fa-solid fa-list-check"></i> Audit Logs</a>
         <a href="/backup"><i class="fa-solid fa-database"></i> Backups</a>
+        <a href="/security-demo"><i class="fa-solid fa-shield-halved"></i> Security Vault</a> <!-- NEW LINK -->
     {% endif %}
     
     <hr style="border-color: #2d3748; margin: 10px 20px;">

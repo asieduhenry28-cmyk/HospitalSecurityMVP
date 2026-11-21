@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
-from extensions import get_db_connection, log_action
+from extensions import get_db_connection, log_action, cipher_suite
 
 admin = Blueprint('admin', __name__)
 
@@ -120,3 +120,43 @@ def backup_page():
     return render_template('backup.html', 
                            username=session['username'], 
                            role=session['role'])
+
+# --- NEW SECURITY DEMO ROUTE ---
+@admin.route('/security-demo')
+def security_demo():
+    if 'user_id' not in session or session.get('role') != 'admin':
+        return "Access Denied: Only Admins can view this page.", 403
+    
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    # Get the most recently added patient to show their encrypted phone number
+    cursor.execute("SELECT full_name, contact_number FROM patients ORDER BY patient_id DESC LIMIT 1")
+    latest_patient = cursor.fetchone()
+    
+    # Get the admin's password hash
+    cursor.execute("SELECT password_hash FROM users WHERE user_id = %s", (session['user_id'],))
+    admin_hash = cursor.fetchone()[0]
+    
+    cursor.close()
+    conn.close()
+    
+    patient_name = "No patients in database"
+    encrypted_phone = "N/A"
+    decrypted_phone = "N/A"
+    
+    if latest_patient:
+        patient_name = latest_patient[0]
+        encrypted_phone = latest_patient[1]
+        try:
+            decrypted_phone = cipher_suite.decrypt(encrypted_phone.encode()).decode()
+        except:
+            decrypted_phone = "Error decrypting"
+            
+    return render_template('security_demo.html', 
+                           username=session['username'], 
+                           role=session['role'],
+                           patient_name=patient_name,
+                           encrypted_phone=encrypted_phone,
+                           decrypted_phone=decrypted_phone,
+                           admin_hash=admin_hash)
