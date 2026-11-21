@@ -72,7 +72,7 @@
         .card-docs .icon-box { background: rgba(139, 92, 246, 0.1); color: #8b5cf6; }
 
         /* Main Widgets */
-        .widget-card { background: var(--card-bg); border-radius: 16px; padding: 25px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); border: 1px solid #f1f5f9; margin-bottom: 30px;}
+        .widget-card { background: var(--card-bg); border-radius: 16px; padding: 25px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); border: 1px solid #f1f5f9; margin-bottom: 30px; overflow: hidden; /* Prevents bleeding */}
         .widget-title { font-weight: 700; font-size: 1.1rem; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between;}
         
         /* Table */
@@ -92,6 +92,18 @@
         .qa-purple { background: linear-gradient(135deg, #8b5cf6, #6d28d9); }
         .qa-green { background: linear-gradient(135deg, #10b981, #059669); }
         .qa-red { background: linear-gradient(135deg, #ef4444, #dc2626); }
+
+        /* BRUTE FORCE CHART FIX */
+        .chart-wrapper {
+            position: relative;
+            height: 300px !important; /* Forces the height */
+            max-height: 300px !important;
+            width: 100%;
+            overflow: hidden; /* Hides any stretching */
+        }
+        .chart-wrapper canvas {
+            max-height: 300px !important; /* Forces the canvas itself to stop growing */
+        }
     </style>
 </head>
 <body>
@@ -305,15 +317,15 @@
         </div>
     </div>
     
-    <!-- Charts Row (FIXED HEIGHT) -->
+    <!-- Charts Row -->
     <div class="row mt-2">
         <div class="col-md-6">
             <div class="widget-card">
                 <div class="widget-title">
                     <span><i class="fa-solid fa-chart-pie text-primary me-2"></i> Patient Demographics</span>
                 </div>
-                <!-- The wrapper div below stops the infinite stretching bug -->
-                <div style="position: relative; height: 300px; width: 100%;">
+                <!-- Using the strict chart-wrapper class -->
+                <div class="chart-wrapper">
                     <canvas id="genderChart"></canvas>
                 </div>
             </div>
@@ -323,8 +335,8 @@
                 <div class="widget-title">
                     <span><i class="fa-solid fa-chart-bar text-success me-2"></i> Appointment Status</span>
                 </div>
-                <!-- The wrapper div below stops the infinite stretching bug -->
-                <div style="position: relative; height: 300px; width: 100%;">
+                <!-- Using the strict chart-wrapper class -->
+                <div class="chart-wrapper">
                     <canvas id="apptChart"></canvas>
                 </div>
             </div>
@@ -354,7 +366,7 @@
         },
         options: { 
             responsive: true, 
-            maintainAspectRatio: false,
+            maintainAspectRatio: false, // CRITICAL
             cutout: '65%',
             plugins: { 
                 legend: { 
@@ -385,7 +397,7 @@
         },
         options: { 
             responsive: true, 
-            maintainAspectRatio: false,
+            maintainAspectRatio: false, // CRITICAL
             plugins: { legend: { display: false } },
             scales: { 
                 y: { 
