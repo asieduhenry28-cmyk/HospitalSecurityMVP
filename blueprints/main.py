@@ -40,15 +40,18 @@ def dashboard():
             decrypted_contact = p[4]
         recent_patients.append((p[0], p[1], p[2], p[3], decrypted_contact))
     
+    # Data for Charts
     cursor.execute("SELECT gender, COUNT(*) FROM patients GROUP BY gender")
     gender_data = cursor.fetchall()
+    # MOCK DATA FOR PRESENTATION (If DB is empty)
     if not gender_data:
-        gender_data = [('No Data', 1)] 
+        gender_data = [('Male', 14), ('Female', 22), ('Other', 4)]
         
     cursor.execute("SELECT status, COUNT(*) FROM appointments GROUP BY status")
     appt_data = cursor.fetchall()
+    # MOCK DATA FOR PRESENTATION (If DB is empty)
     if not appt_data:
-        appt_data = [('No Data', 1)] 
+        appt_data = [('Completed', 18), ('Scheduled', 9), ('Cancelled', 3)]
     
     cursor.close()
     conn.close()

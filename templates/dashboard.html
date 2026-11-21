@@ -329,7 +329,7 @@
 
 <!-- Chart Data Script -->
 <script>
-    // Gender Chart
+    // Gender Chart (Doughnut)
     const genderCtx = document.getElementById('genderChart').getContext('2d');
     const genderDataRaw = {{ gender_data|tojson }};
     const genderLabels = genderDataRaw.map(item => item[0] || 'Unknown');
@@ -349,12 +349,17 @@
         options: { 
             responsive: true, 
             maintainAspectRatio: false,
-            cutout: '70%',
-            plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 8 } } } 
+            cutout: '65%', // Makes it look like a nice ring
+            plugins: { 
+                legend: { 
+                    position: 'right', // Moves legend to the right for a cleaner look
+                    labels: { usePointStyle: true, boxWidth: 8, font: {family: 'Inter', size: 13} } 
+                } 
+            } 
         }
     });
 
-    // Appointment Chart
+    // Appointment Chart (Bar)
     const apptCtx = document.getElementById('apptChart').getContext('2d');
     const apptDataRaw = {{ appt_data|tojson }};
     const apptLabels = apptDataRaw.map(item => item[0] ? item[0].charAt(0).toUpperCase() + item[0].slice(1) : 'Unknown');
@@ -365,20 +370,27 @@
         data: {
             labels: apptLabels,
             datasets: [{
-                label: 'Number of Appointments',
+                label: 'Appointments',
                 data: apptCounts,
-                backgroundColor: '#10b981',
-                borderRadius: 8,
-                barThickness: 40
+                backgroundColor: ['#10b981', '#f59e0b', '#ef4444'], // Green, Yellow, Red
+                borderRadius: 6,
+                barThickness: 50 // Controls the width of the bars so they don't get massive
             }]
         },
         options: { 
             responsive: true, 
-            maintainAspectRatio: false,
+            maintainAspectRatio: false, // Prevents the giant bar issue
             plugins: { legend: { display: false } },
             scales: { 
-                y: { beginAtZero: true, ticks: { stepSize: 1 }, grid: { borderDash: [5, 5] } },
-                x: { grid: { display: false } }
+                y: { 
+                    beginAtZero: true, 
+                    ticks: { stepSize: 5, font: {family: 'Inter'} }, 
+                    grid: { borderDash: [5, 5], color: '#e2e8f0' } 
+                },
+                x: { 
+                    grid: { display: false },
+                    ticks: { font: {family: 'Inter', weight: 'bold'} }
+                }
             }
         }
     });
