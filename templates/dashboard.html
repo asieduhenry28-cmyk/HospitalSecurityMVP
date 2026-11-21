@@ -3,51 +3,95 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Hospital Security MVP</title>
+    <title>Dashboard - CarePlus MVP</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- FontAwesome for Icons -->
+    <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Chart.js for Graphs -->
+    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <style>
-        body { background-color: #f4f7f6; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; overflow-x: hidden;}
-        
-        /* Sidebar Styling */
-        .sidebar { background-color: #0b1a30; color: white; min-height: 100vh; padding-top: 20px; position: fixed; width: 250px; z-index: 1000;}
-        .sidebar h4 { padding-left: 20px; margin-bottom: 30px; font-weight: bold; color: #fff; }
-        .sidebar a { color: #a0aec0; text-decoration: none; padding: 12px 20px; display: block; transition: 0.3s; font-size: 15px;}
-        .sidebar a:hover, .sidebar a.active { background-color: #1a365d; color: white; border-left: 4px solid #3b82f6; }
-        .sidebar i { margin-right: 12px; width: 20px; text-align: center; }
-        
-        /* Main Content */
-        .main-content { margin-left: 250px; padding: 20px; transition: 0.3s;}
-        @media (max-width: 768px) {
-            .sidebar { transform: translateX(-100%); }
-            .main-content { margin-left: 0; }
+        :root {
+            --sidebar-bg: #0f172a;
+            --sidebar-hover: #1e293b;
+            --primary: #3b82f6;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --bg-main: #f1f5f9;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
         }
 
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: var(--bg-main); 
+            color: var(--text-main);
+            overflow-x: hidden;
+        }
+        
+        /* Sidebar */
+        .sidebar { background-color: var(--sidebar-bg); color: white; min-height: 100vh; padding-top: 20px; position: fixed; width: 260px; z-index: 1000;}
+        .sidebar h4 { padding-left: 20px; margin-bottom: 30px; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 10px;}
+        .sidebar a { color: #94a3b8; text-decoration: none; padding: 14px 20px; display: flex; align-items: center; transition: 0.2s; font-size: 15px; font-weight: 500;}
+        .sidebar a:hover, .sidebar a.active { background-color: var(--sidebar-hover); color: white; border-left: 4px solid var(--primary); }
+        .sidebar i { margin-right: 15px; width: 20px; text-align: center; font-size: 18px;}
+        
+        /* Main Content */
+        .main-content { margin-left: 260px; padding: 30px; }
+        @media (max-width: 991px) { .sidebar { transform: translateX(-100%); } .main-content { margin-left: 0; } }
+
         /* Top Navbar */
-        .top-navbar { background: white; padding: 15px 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 25px; display: flex; align-items: center; justify-content: space-between;}
-        .search-bar { background: #f1f5f9; border: none; border-radius: 20px; padding: 10px 20px; width: 400px; max-width: 100%;}
-        .profile-pic { width: 40px; height: 40px; border-radius: 50%; background-color: #3b82f6; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px;}
+        .top-navbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 30px;}
+        .search-bar { background: white; border: 1px solid #e2e8f0; border-radius: 30px; padding: 10px 20px; width: 350px; display: flex; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.02);}
+        .search-bar input { border: none; outline: none; width: 100%; margin-left: 10px; font-size: 14px;}
         
-        /* Cards */
-        .stat-card { border-radius: 12px; border: none; box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: transform 0.2s; height: 100%;}
-        .stat-card:hover { transform: translateY(-5px); }
-        .stat-icon { font-size: 40px; opacity: 0.3; position: absolute; right: 20px; top: 20px; }
+        .profile-section { display: flex; align-items: center; gap: 20px; }
+        .notification-bell { position: relative; cursor: pointer; background: white; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05);}
+        .notification-bell span { position: absolute; top: 5px; right: 5px; background: var(--danger); width: 10px; height: 10px; border-radius: 50%; border: 2px solid white;}
         
-        /* Charts */
-        .chart-card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        .user-profile { display: flex; align-items: center; gap: 12px; background: white; padding: 5px 15px 5px 5px; border-radius: 30px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); cursor: pointer;}
+        .profile-pic { width: 38px; height: 38px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), #8b5cf6); color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 16px;}
+        
+        /* Welcome Banner */
+        .welcome-banner { background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); border-radius: 16px; padding: 25px 30px; margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); border: 1px solid #e2e8f0;}
+        
+        /* Stat Cards */
+        .stat-card { background: var(--card-bg); border-radius: 16px; padding: 25px; border: none; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03); transition: transform 0.2s, box-shadow 0.2s; position: relative; overflow: hidden;}
+        .stat-card:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
+        .stat-card .icon-box { width: 50px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 15px;}
+        
+        /* Specific Card Colors */
+        .card-patients .icon-box { background: rgba(59, 130, 246, 0.1); color: var(--primary); }
+        .card-appts .icon-box { background: rgba(16, 185, 129, 0.1); color: var(--success); }
+        .card-total .icon-box { background: rgba(245, 158, 11, 0.1); color: var(--warning); }
+        .card-docs .icon-box { background: rgba(139, 92, 246, 0.1); color: #8b5cf6; }
+
+        /* Main Widgets */
+        .widget-card { background: var(--card-bg); border-radius: 16px; padding: 25px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); border: 1px solid #f1f5f9; margin-bottom: 30px;}
+        .widget-title { font-weight: 700; font-size: 1.1rem; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between;}
         
         /* Table */
-        .table-card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .table th { border-bottom: 2px solid #f1f5f9; color: var(--text-muted); font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; padding: 15px 10px;}
+        .table td { vertical-align: middle; padding: 15px 10px; border-bottom: 1px solid #f8fafc;}
         
-        /* Quick Actions */
-        .action-btn { border-radius: 10px; padding: 15px; text-align: center; color: white; text-decoration: none; display: block; transition: 0.3s; border: none; width: 100%; margin-bottom: 10px; font-weight: 500;}
-        .action-btn:hover { opacity: 0.9; transform: scale(1.02); color: white;}
-        .action-btn i { font-size: 24px; margin-bottom: 8px; display: block; }
+        /* Empty State */
+        .empty-state { text-align: center; padding: 40px 20px; }
+        .empty-state i { font-size: 50px; color: #cbd5e1; margin-bottom: 15px; }
+
+        /* Quick Actions Grid */
+        .quick-action-btn { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; border-radius: 12px; text-decoration: none; color: white; font-weight: 600; font-size: 14px; transition: 0.2s; height: 100%;}
+        .quick-action-btn:hover { transform: translateY(-3px); opacity: 0.9; color: white;}
+        .quick-action-btn i { font-size: 24px; margin-bottom: 10px; }
+        
+        .qa-blue { background: linear-gradient(135deg, #3b82f6, #2563eb); }
+        .qa-purple { background: linear-gradient(135deg, #8b5cf6, #6d28d9); }
+        .qa-green { background: linear-gradient(135deg, #10b981, #059669); }
+        .qa-red { background: linear-gradient(135deg, #ef4444, #dc2626); }
     </style>
 </head>
 <body>
@@ -59,16 +103,17 @@
     <a href="/view_patients"><i class="fa-solid fa-users"></i> Patients</a>
     <a href="/view_appointments"><i class="fa-solid fa-calendar-check"></i> Appointments</a>
     
-        {% if role == 'admin' %}
-        <hr style="border-color: #2d3748; margin: 10px 20px;">
+    {% if role == 'admin' %}
+        <div style="padding: 15px 20px 5px; font-size: 11px; font-weight: 700; color: #475569; text-transform: uppercase;">System Admin</div>
         <a href="/manage_users"><i class="fa-solid fa-user-shield"></i> Manage Users</a>
         <a href="/audit_logs"><i class="fa-solid fa-list-check"></i> Audit Logs</a>
         <a href="/backup"><i class="fa-solid fa-database"></i> Backups</a>
-        <a href="/security-demo"><i class="fa-solid fa-shield-halved"></i> Security Vault</a> <!-- NEW LINK -->
+        <a href="/security-demo"><i class="fa-solid fa-shield-halved"></i> Security Vault</a>
     {% endif %}
     
-    <hr style="border-color: #2d3748; margin: 10px 20px;">
-    <a href="/logout" style="color: #fc8181;"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+    <div style="position: absolute; bottom: 20px; width: 100%;">
+        <a href="/logout" style="color: #f87171;"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+    </div>
 </div>
 
 <!-- Main Content -->
@@ -76,33 +121,23 @@
     
     <!-- Top Navbar -->
     <div class="top-navbar">
-        <form action="/view_patients" method="GET" class="d-flex align-items-center w-50">
-            <i class="fa-solid fa-magnifying-glass text-muted me-2"></i>
-            <input type="text" name="search" class="search-bar" placeholder="Search patients, records...">
-        </form>
-        <div class="d-flex align-items-center gap-4">
-            <div class="position-relative">
-                <i class="fa-regular fa-bell fs-5 text-muted"></i>
-                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 10px;">3</span>
+        <div class="search-bar">
+            <i class="fa-solid fa-magnifying-glass text-muted"></i>
+            <input type="text" placeholder="Search patients, records...">
+        </div>
+        <div class="profile-section">
+            <div class="notification-bell">
+                <i class="fa-regular fa-bell text-muted"></i>
+                <span></span>
             </div>
-            <div class="d-flex align-items-center gap-2">
+            <div class="user-profile">
                 <div class="profile-pic">{{ username[0]|upper }}</div>
                 <div>
-                    <h6 class="mb-0 fw-bold" style="font-size: 14px;">{{ username }}</h6>
+                    <h6 class="mb-0 fw-bold" style="font-size: 14px; color: var(--text-main);">{{ username }}</h6>
                     <small class="text-muted" style="font-size: 12px;">{{ role|capitalize }}</small>
                 </div>
+                <i class="fa-solid fa-chevron-down text-muted ms-2" style="font-size: 12px;"></i>
             </div>
-        </div>
-    </div>
-
-    <!-- Header Title -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h3 class="fw-bold mb-0">Dashboard Overview</h3>
-            <p class="text-muted mb-0">Welcome back, here is what's happening today.</p>
-        </div>
-        <div class="text-end text-muted">
-            <small><i class="fa-regular fa-calendar me-1"></i> {{ datetime.now().strftime('%A, %d %b %Y') if datetime else 'Today' }}</small>
         </div>
     </div>
 
@@ -118,57 +153,60 @@
         {% endif %}
     {% endwith %}
 
+    <!-- Welcome Banner -->
+    <div class="welcome-banner">
+        <div>
+            <h3 class="fw-bold mb-1">{{ greeting }}, {{ username }}! 👋</h3>
+            <p class="text-muted mb-0">Here is what's happening at the hospital today.</p>
+        </div>
+        <div class="text-end d-none d-md-block">
+            <div class="text-muted fw-bold"><i class="fa-regular fa-calendar me-2"></i> {% now 'Europe/London', '%A, %d %B %Y' %}</div>
+        </div>
+    </div>
+
     <!-- Stat Cards -->
     <div class="row mb-4">
-        <div class="col-md-3 mb-3">
-            <div class="card stat-card p-3">
-                <div class="card-body position-relative">
-                    <p class="text-muted mb-1 fw-bold text-uppercase" style="font-size: 12px;">Total Patients</p>
-                    <h2 class="fw-bold text-primary mb-0">{{ total_patients }}</h2>
-                    <i class="fa-solid fa-users text-primary stat-icon"></i>
-                </div>
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="stat-card card-patients">
+                <div class="icon-box"><i class="fa-solid fa-users"></i></div>
+                <h6 class="text-muted fw-bold mb-1">Total Patients</h6>
+                <h2 class="fw-bold mb-0">{{ total_patients }}</h2>
             </div>
         </div>
-        <div class="col-md-3 mb-3">
-            <div class="card stat-card p-3">
-                <div class="card-body position-relative">
-                    <p class="text-muted mb-1 fw-bold text-uppercase" style="font-size: 12px;">Today's Appointments</p>
-                    <h2 class="fw-bold text-success mb-0">{{ todays_appts }}</h2>
-                    <i class="fa-solid fa-calendar-day text-success stat-icon"></i>
-                </div>
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="stat-card card-appts">
+                <div class="icon-box"><i class="fa-solid fa-calendar-day"></i></div>
+                <h6 class="text-muted fw-bold mb-1">Today's Appointments</h6>
+                <h2 class="fw-bold mb-0">{{ todays_appts }}</h2>
             </div>
         </div>
-        <div class="col-md-3 mb-3">
-            <div class="card stat-card p-3">
-                <div class="card-body position-relative">
-                    <p class="text-muted mb-1 fw-bold text-uppercase" style="font-size: 12px;">Total Appointments</p>
-                    <h2 class="fw-bold text-warning mb-0">{{ total_appointments }}</h2>
-                    <i class="fa-solid fa-calendar-check text-warning stat-icon"></i>
-                </div>
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="stat-card card-total">
+                <div class="icon-box"><i class="fa-solid fa-calendar-check"></i></div>
+                <h6 class="text-muted fw-bold mb-1">Total Appointments</h6>
+                <h2 class="fw-bold mb-0">{{ total_appointments }}</h2>
             </div>
         </div>
-        <div class="col-md-3 mb-3">
-            <div class="card stat-card p-3">
-                <div class="card-body position-relative">
-                    <p class="text-muted mb-1 fw-bold text-uppercase" style="font-size: 12px;">Active Doctors</p>
-                    <h2 class="fw-bold text-info mb-0">{{ total_doctors }}</h2>
-                    <i class="fa-solid fa-user-doctor text-info stat-icon"></i>
-                </div>
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="stat-card card-docs">
+                <div class="icon-box"><i class="fa-solid fa-user-doctor"></i></div>
+                <h6 class="text-muted fw-bold mb-1">Active Doctors</h6>
+                <h2 class="fw-bold mb-0">{{ total_doctors }}</h2>
             </div>
         </div>
     </div>
 
     <div class="row">
-        <!-- Recent Patients Table -->
-        <div class="col-lg-8 mb-4">
-            <div class="table-card h-100">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h5 class="fw-bold mb-0"><i class="fa-solid fa-clock-rotate-left me-2 text-primary"></i> Recent Patients</h5>
-                    <a href="/view_patients" class="btn btn-sm btn-outline-primary">View All</a>
+        <!-- Recent Patients -->
+        <div class="col-lg-8">
+            <div class="widget-card">
+                <div class="widget-title">
+                    <span><i class="fa-solid fa-clock-rotate-left text-primary me-2"></i> Recent Patients</span>
+                    <a href="/view_patients" class="btn btn-sm btn-outline-primary" style="border-radius: 20px;">View All</a>
                 </div>
                 <div class="table-responsive">
                     <table class="table table-hover align-middle">
-                        <thead class="table-light">
+                        <thead>
                             <tr>
                                 <th>Name</th>
                                 <th>DOB</th>
@@ -180,21 +218,29 @@
                         <tbody>
                             {% for p in recent_patients %}
                             <tr>
-                                <td class="fw-bold">{{ p[1] }}</td>
+                                <td class="fw-bold" style="color: var(--text-main);">{{ p[1] }}</td>
                                 <td>{{ p[2] }}</td>
-                                <td>{{ p[3] }}</td>
+                                <td>
+                                    {% if p[3] == 'Male' %}<span class="badge bg-info text-dark">Male</span>
+                                    {% elif p[3] == 'Female' %}<span class="badge bg-danger">Female</span>
+                                    {% else %}<span class="badge bg-secondary">{{ p[3] }}</span>{% endif %}
+                                </td>
                                 <td>{{ p[4] }}</td>
                                 <td>
                                     {% if role in ['admin', 'doctor'] %}
-                                        <a href="/view_records/{{ p[0] }}" class="btn btn-sm btn-info text-white">Records</a>
-                                    {% else %}
-                                        <span class="text-muted">-</span>
+                                        <a href="/view_records/{{ p[0] }}" class="btn btn-sm btn-outline-primary"><i class="fa-solid fa-notes-medical"></i></a>
                                     {% endif %}
                                 </td>
                             </tr>
                             {% else %}
                             <tr>
-                                <td colspan="5" class="text-center text-muted py-4">No patients registered yet.</td>
+                                <td colspan="5">
+                                    <div class="empty-state">
+                                        <i class="fa-solid fa-folder-open"></i>
+                                        <h5 class="text-muted">No patients registered yet</h5>
+                                        <p class="text-muted small mb-0">Newly registered patients will appear here.</p>
+                                    </div>
+                                </td>
                             </tr>
                             {% endfor %}
                         </tbody>
@@ -203,34 +249,56 @@
             </div>
         </div>
 
-        <!-- Quick Actions & Status -->
-        <div class="col-lg-4 mb-4">
-            <div class="table-card mb-4">
-                <h5 class="fw-bold mb-3"><i class="fa-solid fa-bolt me-2 text-warning"></i> Quick Actions</h5>
-                {% if role in ['admin', 'receptionist'] %}
-                    <a href="/add_patient" class="action-btn" style="background-color: #3b82f6;"><i class="fa-solid fa-user-plus"></i> Register Patient</a>
-                    <a href="/schedule_appointment" class="action-btn" style="background-color: #8b5cf6;"><i class="fa-solid fa-calendar-plus"></i> New Appointment</a>
-                {% endif %}
-                <a href="/view_patients" class="action-btn" style="background-color: #10b981;"><i class="fa-solid fa-notes-medical"></i> Patient Records</a>
-                {% if role == 'admin' %}
-                    <a href="/audit_logs" class="action-btn" style="background-color: #ef4444;"><i class="fa-solid fa-shield-halved"></i> Security Logs</a>
-                {% endif %}
+        <!-- Quick Actions & System Status -->
+        <div class="col-lg-4">
+            <div class="widget-card">
+                <div class="widget-title">
+                    <span><i class="fa-solid fa-bolt text-warning me-2"></i> Quick Actions</span>
+                </div>
+                <div class="row g-3">
+                    {% if role in ['admin', 'receptionist'] %}
+                    <div class="col-6">
+                        <a href="/add_patient" class="quick-action-btn qa-blue">
+                            <i class="fa-solid fa-user-plus"></i> Register Patient
+                        </a>
+                    </div>
+                    <div class="col-6">
+                        <a href="/schedule_appointment" class="quick-action-btn qa-purple">
+                            <i class="fa-solid fa-calendar-plus"></i> New Appointment
+                        </a>
+                    </div>
+                    {% endif %}
+                    <div class="col-6">
+                        <a href="/view_patients" class="quick-action-btn qa-green">
+                            <i class="fa-solid fa-notes-medical"></i> Patient Records
+                        </a>
+                    </div>
+                    {% if role == 'admin' %}
+                    <div class="col-6">
+                        <a href="/audit_logs" class="quick-action-btn qa-red">
+                            <i class="fa-solid fa-shield-halved"></i> Security Logs
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
             </div>
 
-            <div class="table-card">
-                <h5 class="fw-bold mb-3"><i class="fa-solid fa-server me-2 text-success"></i> System Status</h5>
+            <div class="widget-card">
+                <div class="widget-title">
+                    <span><i class="fa-solid fa-server text-success me-2"></i> System Status</span>
+                </div>
                 <ul class="list-group list-group-flush">
-                    <li class="list-group-item d-flex justify-content-between align-items-center px-0">
-                        <span><i class="fa-solid fa-database text-muted me-2"></i> Database</span>
-                        <span class="badge bg-success rounded-pill">Online</span>
+                    <li class="list-group-item d-flex justify-content-between align-items-center px-0 border-0">
+                        <span class="text-muted fw-bold"><i class="fa-solid fa-database me-2"></i> Database</span>
+                        <span class="badge bg-success rounded-pill px-3 py-2">Online</span>
                     </li>
-                    <li class="list-group-item d-flex justify-content-between align-items-center px-0">
-                        <span><i class="fa-solid fa-cloud text-muted me-2"></i> Cloud Server</span>
-                        <span class="badge bg-success rounded-pill">Running</span>
+                    <li class="list-group-item d-flex justify-content-between align-items-center px-0 border-0">
+                        <span class="text-muted fw-bold"><i class="fa-solid fa-cloud me-2"></i> Vercel Cloud</span>
+                        <span class="badge bg-success rounded-pill px-3 py-2">Running</span>
                     </li>
-                    <li class="list-group-item d-flex justify-content-between align-items-center px-0">
-                        <span><i class="fa-solid fa-lock text-muted me-2"></i> 2FA Security</span>
-                        <span class="badge bg-success rounded-pill">Active</span>
+                    <li class="list-group-item d-flex justify-content-between align-items-center px-0 border-0">
+                        <span class="text-muted fw-bold"><i class="fa-solid fa-lock me-2"></i> 2FA Security</span>
+                        <span class="badge bg-success rounded-pill px-3 py-2">Active</span>
                     </li>
                 </ul>
             </div>
@@ -238,17 +306,21 @@
     </div>
     
     <!-- Charts Row -->
-    <div class="row">
-        <div class="col-md-6 mb-4">
-            <div class="chart-card">
-                <h5 class="fw-bold mb-3"><i class="fa-solid fa-chart-pie me-2 text-primary"></i> Patient Demographics</h5>
-                <canvas id="genderChart"></canvas>
+    <div class="row mt-2">
+        <div class="col-md-6">
+            <div class="widget-card">
+                <div class="widget-title">
+                    <span><i class="fa-solid fa-chart-pie text-primary me-2"></i> Patient Demographics</span>
+                </div>
+                <canvas id="genderChart" height="200"></canvas>
             </div>
         </div>
-        <div class="col-md-6 mb-4">
-            <div class="chart-card">
-                <h5 class="fw-bold mb-3"><i class="fa-solid fa-chart-bar me-2 text-success"></i> Appointment Status</h5>
-                <canvas id="apptChart"></canvas>
+        <div class="col-md-6">
+            <div class="widget-card">
+                <div class="widget-title">
+                    <span><i class="fa-solid fa-chart-bar text-success me-2"></i> Appointment Status</span>
+                </div>
+                <canvas id="apptChart" height="200"></canvas>
             </div>
         </div>
     </div>
@@ -270,10 +342,16 @@
             datasets: [{
                 data: genderCounts,
                 backgroundColor: ['#3b82f6', '#ec4899', '#8b5cf6', '#f59e0b'],
-                borderWidth: 0
+                borderWidth: 0,
+                hoverOffset: 4
             }]
         },
-        options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+        options: { 
+            responsive: true, 
+            maintainAspectRatio: false,
+            cutout: '70%',
+            plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 8 } } } 
+        }
     });
 
     // Appointment Chart
@@ -290,18 +368,22 @@
                 label: 'Number of Appointments',
                 data: apptCounts,
                 backgroundColor: '#10b981',
-                borderRadius: 5
+                borderRadius: 8,
+                barThickness: 40
             }]
         },
         options: { 
             responsive: true, 
+            maintainAspectRatio: false,
             plugins: { legend: { display: false } },
-            scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+            scales: { 
+                y: { beginAtZero: true, ticks: { stepSize: 1 }, grid: { borderDash: [5, 5] } },
+                x: { grid: { display: false } }
+            }
         }
     });
 </script>
 
-<!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
