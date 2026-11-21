@@ -29,7 +29,7 @@
 
         body { background-color: var(--bg-body); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; }
 
-        /* --- SIDEBAR (Always visible) --- */
+        /* --- DESKTOP SIDEBAR --- */
         .sidebar { width: 260px; background-color: var(--bg-sidebar); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; padding-top: 20px; overflow-y: auto; flex-shrink: 0;}
         .logo { padding: 0 25px 30px; font-size: 22px; font-weight: 600; color: var(--text-main); display: flex; align-items: center; gap: 10px;}
         .logo span { color: var(--accent-cyan); }
@@ -41,10 +41,15 @@
         
         .sidebar .nav-section { font-size: 11px; text-transform: uppercase; color: #475569; padding: 20px 25px 10px; font-weight: 700; letter-spacing: 1px;}
 
+        /* --- MOBILE BOTTOM NAVIGATION --- */
+        .mobile-nav { display: none; position: fixed; bottom: 0; left: 0; width: 100%; background: var(--bg-sidebar); border-top: 1px solid var(--border-color); justify-content: space-around; padding: 10px 0; z-index: 1000; }
+        .mobile-nav a { display: flex; flex-direction: column; align-items: center; color: var(--text-muted); text-decoration: none; font-size: 11px; gap: 5px; }
+        .mobile-nav a i { font-size: 20px; }
+        .mobile-nav a.active { color: var(--accent-cyan); }
+
         /* --- MAIN CONTENT --- */
         .main-wrapper { flex: 1; display: flex; flex-direction: column; overflow-y: auto; padding: 30px 40px; }
         
-        /* Top Header */
         .top-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
         .greeting h1 { font-size: 26px; font-weight: 600; display: flex; align-items: center; gap: 10px; }
         .greeting p { font-size: 14px; color: var(--text-muted); margin-top: 5px; }
@@ -63,24 +68,21 @@
         .profile-info h4 { font-size: 14px; font-weight: 600; }
         .profile-info p { font-size: 12px; color: var(--text-muted); }
 
-        /* --- MAIN GRID --- */
+        /* --- GRID & CARDS --- */
         .dashboard-grid { display: grid; grid-template-columns: 1.8fr 1fr; gap: 25px; }
-
-        /* --- CARDS --- */
         .card { background: var(--bg-card); border-radius: 16px; padding: 25px; border: 1px solid var(--border-color); margin-bottom: 25px; }
         .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .card-header h2 { font-size: 18px; font-weight: 600; }
         .card-header a { color: var(--accent-cyan); font-size: 13px; text-decoration: none; font-weight: 500;}
         .card-header a:hover { text-decoration: underline; }
 
-        /* --- SEARCH FILTER ROW --- */
         .filter-row { display: flex; gap: 15px; margin-bottom: 20px; }
         .filter-row .search-box { flex: 1; width: 100%; }
-        .btn-advance { background: var(--accent-cyan); color: #000; border: none; padding: 0 20px; border-radius: 8px; font-weight: 600; font-size: 14px; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: 0.3s;}
+        .btn-advance { background: var(--accent-cyan); color: #000; border: none; padding: 0 20px; border-radius: 8px; font-weight: 600; font-size: 14px; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: 0.3s; white-space: nowrap;}
         .btn-advance:hover { background: var(--accent-hover); }
 
-        /* --- TABLES --- */
-        .table-custom { width: 100%; border-collapse: collapse; }
+        .table-responsive { overflow-x: auto; width: 100%; }
+        .table-custom { width: 100%; border-collapse: collapse; min-width: 600px; }
         .table-custom th { text-align: left; padding: 15px 10px; font-size: 13px; color: var(--text-muted); font-weight: 500; border-bottom: 1px solid var(--border-color); }
         .table-custom td { padding: 18px 10px; font-size: 14px; border-bottom: 1px solid var(--border-color); vertical-align: middle;}
         .table-custom tr:last-child td { border-bottom: none; }
@@ -96,7 +98,6 @@
         
         .details-link { color: var(--accent-cyan); text-decoration: underline; font-size: 13px; }
 
-        /* --- RIGHT COLUMN SPECIFICS --- */
         .year-select { background: var(--bg-input); color: white; border: 1px solid var(--border-color); padding: 6px 12px; border-radius: 6px; font-size: 13px; outline: none; }
         
         .stats-row { display: flex; gap: 40px; margin-top: 10px; }
@@ -107,7 +108,6 @@
         .stat-info h3 { font-size: 20px; font-weight: 600; }
         .stat-info p { font-size: 13px; color: var(--text-muted); }
 
-        /* Doctor List */
         .doctor-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid var(--border-color); }
         .doctor-item:last-child { border-bottom: none; padding-bottom: 0;}
         .doctor-left { display: flex; align-items: center; gap: 15px; }
@@ -117,28 +117,31 @@
         .doc-status { font-size: 13px; font-weight: 500; color: var(--badge-green-text); }
         .doc-status.leave { color: #ff6b6b; }
 
-        /* Today's Report */
         .report-item { display: flex; gap: 15px; padding: 15px 0; border-bottom: 1px solid var(--border-color); }
         .report-item:last-child { border-bottom: none; padding-bottom: 0;}
         .report-icon { width: 40px; height: 40px; border-radius: 50%; background: rgba(255, 152, 0, 0.15); color: var(--badge-orange-text); display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0;}
         .report-info h4 { font-size: 14px; font-weight: 500; line-height: 1.4; }
         .report-info p { font-size: 12px; color: var(--text-muted); margin-top: 5px; }
 
-        /* Mobile Responsiveness - Keeps Sidebar Visible by Stacking it */
+        /* --- MOBILE RESPONSIVENESS --- */
         @media (max-width: 1024px) {
-            body { flex-direction: column; overflow: auto; }
-            .sidebar { width: 100%; height: auto; padding-bottom: 20px; }
-            .main-wrapper { padding: 20px; height: auto; overflow: visible;}
+            body { flex-direction: column; overflow: auto; padding-bottom: 70px; /* Space for bottom nav */ }
+            .sidebar { display: none; } /* Hide desktop sidebar */
+            .mobile-nav { display: flex; } /* Show bottom nav */
+            .main-wrapper { padding: 20px; height: auto; overflow: visible; }
             .dashboard-grid { grid-template-columns: 1fr; }
-            .top-header { flex-direction: column; align-items: flex-start; gap: 20px;}
-            .header-actions { width: 100%; justify-content: space-between;}
+            .top-header { flex-direction: column; align-items: flex-start; gap: 15px;}
+            .header-actions { width: 100%; flex-wrap: wrap; }
             .search-box { width: 100%; }
+            .profile { margin-left: 0; }
+            .filter-row { flex-direction: column; }
+            .btn-advance { padding: 12px; justify-content: center; }
         }
     </style>
 </head>
 <body>
 
-    <!-- SIDEBAR (Locked in place) -->
+    <!-- DESKTOP SIDEBAR -->
     <div class="sidebar">
         <div class="logo">
             <i class="fa-solid fa-heart-pulse" style="color: var(--accent-cyan);"></i> Life<span>Care</span>
@@ -160,10 +163,18 @@
         <a href="/logout" style="color: #ff6b6b; margin-top: auto;"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</a>
     </div>
 
+    <!-- MOBILE BOTTOM NAVIGATION -->
+    <div class="mobile-nav">
+        <a href="/dashboard" class="active"><i class="fa-solid fa-border-all"></i> Home</a>
+        <a href="/view_appointments"><i class="fa-regular fa-calendar-check"></i> Appts</a>
+        <a href="/view_patients"><i class="fa-solid fa-user-injured"></i> Patients</a>
+        <a href="/manage_users"><i class="fa-solid fa-users-gear"></i> Users</a>
+        <a href="/logout"><i class="fa-solid fa-arrow-right-from-bracket"></i> Exit</a>
+    </div>
+
     <!-- MAIN CONTENT -->
     <div class="main-wrapper">
         
-        <!-- Top Header -->
         <div class="top-header">
             <div class="greeting">
                 <h1>Hello, {{ username }}! 👋</h1>
@@ -182,12 +193,10 @@
                         <h4>{{ username }}</h4>
                         <p>{{ role|capitalize }}</p>
                     </div>
-                    <i class="fa-solid fa-chevron-down text-muted" style="font-size: 12px; margin-left: 5px; cursor: pointer;"></i>
                 </div>
             </div>
         </div>
 
-        <!-- Dashboard Grid -->
         <div class="dashboard-grid">
             
             <!-- LEFT COLUMN -->
@@ -206,34 +215,36 @@
                         <button class="btn-advance"><i class="fa-solid fa-sliders"></i> Advance Filter</button>
                     </div>
 
-                    <table class="table-custom">
-                        <thead>
-                            <tr>
-                                <th style="width: 40px;"><input type="checkbox" class="custom-checkbox"></th>
-                                <th>Name</th>
-                                <th>Age</th>
-                                <th>Disease</th>
-                                <th>Status</th>
-                                <th>Details</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for p in recent_patients[:2] %}
-                            <tr>
-                                <td><input type="checkbox" class="custom-checkbox"></td>
-                                <td style="font-weight: 500;">{{ p.name }}</td>
-                                <td>{{ p.age }}</td>
-                                <td>{{ p.disease }}</td>
-                                <td>
-                                    {% if p.status == 'In Treatment' %}<span class="badge badge-treatment">In Treatment</span>
-                                    {% elif p.status == 'New Patient' %}<span class="badge badge-new">New Patient</span>
-                                    {% else %}<span class="badge badge-recovered">Recovered</span>{% endif %}
-                                </td>
-                                <td><a href="/view_patients" class="details-link">Details</a></td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+                    <div class="table-responsive">
+                        <table class="table-custom">
+                            <thead>
+                                <tr>
+                                    <th style="width: 40px;"><input type="checkbox" class="custom-checkbox"></th>
+                                    <th>Name</th>
+                                    <th>Age</th>
+                                    <th>Disease</th>
+                                    <th>Status</th>
+                                    <th>Details</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for p in recent_patients[:2] %}
+                                <tr>
+                                    <td><input type="checkbox" class="custom-checkbox"></td>
+                                    <td style="font-weight: 500;">{{ p.name }}</td>
+                                    <td>{{ p.age }}</td>
+                                    <td>{{ p.disease }}</td>
+                                    <td>
+                                        {% if p.status == 'In Treatment' %}<span class="badge badge-treatment">In Treatment</span>
+                                        {% elif p.status == 'New Patient' %}<span class="badge badge-new">New Patient</span>
+                                        {% else %}<span class="badge badge-recovered">Recovered</span>{% endif %}
+                                    </td>
+                                    <td><a href="/view_patients" class="details-link">Details</a></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
 
                 <div class="card" style="background: transparent; border: none; padding: 0;">
@@ -281,7 +292,6 @@
                         <h2>Patient</h2>
                         <select class="year-select">
                             <option>2023-2024</option>
-                            <option>2024-2025</option>
                         </select>
                     </div>
                     <div class="stats-row">
