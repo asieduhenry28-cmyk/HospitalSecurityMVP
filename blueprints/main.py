@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
 from datetime import datetime
 from extensions import get_db_connection, log_action, cipher_suite
+import random
 
 main = Blueprint('main', __name__)
 
@@ -16,39 +17,80 @@ def dashboard():
     conn = get_db_connection()
     cursor = conn.cursor()
     
+    # Stats
     cursor.execute("SELECT COUNT(*) FROM patients")
     total_patients = cursor.fetchone()[0]
-    
-    cursor.execute("SELECT COUNT(*) FROM appointments")
-    total_appointments = cursor.fetchone()[0]
     
     cursor.execute("SELECT COUNT(*) FROM users WHERE role = 'doctor' AND is_active = TRUE")
     total_doctors = cursor.fetchone()[0]
 
-    today = datetime.now().strftime('%Y-%m-%d')
-    cursor.execute("SELECT COUNT(*) FROM appointments WHERE DATE(appointment_date) = %s", (today,))
-    todays_appts = cursor.fetchone()[0]
-    
-    cursor.execute("SELECT patient_id, full_name, date_of_birth, gender, contact_number FROM patients ORDER BY created_at DESC LIMIT 5")
+    # Get recent patients (Fetching up to 6)
+    cursor.execute("SELECT patient_id, full_name, date_of_birth, gender, created_at FROM patients ORDER BY created_at DESC LIMIT 6")
     raw_patients = cursor.fetchall()
     
     recent_patients = []
     for p in raw_patients:
-        try:
-            decrypted_contact = cipher_suite.decrypt(p[4].encode()).decode()
-        except Exception:
-            decrypted_contact = p[4]
-        recent_patients.append((p[0], p[1], p[2], p[3], decrypted_contact))
-    
-    cursor.execute("SELECT gender, COUNT(*) FROM patients GROUP BY gender")
-    gender_data = cursor.fetchall()
-    if not gender_data:
-        gender_data = [('Male', 14), ('Female', 22), ('Other', 4)]
+        # Calculate Age
+        age = "N/A"
+        if p[2]:
+            try:
+                birth_date = datetime.strptime(str(p[2]), '%Y-%m-%d')
+                age = datetime.now().year - birth_date.year
+            except:
+                pass
         
-    cursor.execute("SELECT status, COUNT(*) FROM appointments GROUP BY status")
-    appt_data = cursor.fetchall()
-    if not appt_data:
-        appt_data = [('Completed', 18), ('Scheduled', 9), ('Cancelled', 3)]
+        # Generate a mock status and disease for visual purposes
+        statuses = ['New Patient', 'In Treatment', 'Recovered']
+        diseases = ['Hypertension', 'Diabetes', 'Influenza', 'Hepatitis C', 'Measles']
+        
+        recent_patients.append({
+            'id': p[0],
+            'name': p[1],
+            'age': age,
+            'gender': p[3],
+            'disease': random.choice(diseases),
+            'status': random.choice(statuses),
+            'date': p[4].strftime('%b %d, %Y') if p[4] else 'N/A'
+        })
+
+    # IF DATABASE IS EMPTY, INJECT MOCK DATA FOR PRESENTATION
+    if not recent_patients:
+        total_patients = 1642
+        total_doctors = 253
+        mock_names = ["Cameron Williamson", "Esther Howard", "Darlene Robertson", "Marvin McKinney", "Kathryn Murphy", "Jacob Jones"]
+        mock_diseases = ["Hepatitis C", "Measles", "Influenza", "Hypertension", "Diabetes", "Asthma"]
+        mock_statuses = ["New Patient", "In Treatment", "Recovered", "New Patient", "In Treatment", "Recovered"]
+        
+        for i in range(6):
+            recent_patients.append({
+                'id': i,
+                'name': mock_names[i],
+                'age': random.randint(20, 65),
+                'gender': 'Male' if i % 2 == 0 else 'Female',
+                'disease': mock_diseases[i],
+                'status': mock_statuses[i],
+                'date': 'Dec 4, 2019 21:42'
+            })
+
+    # Get Doctor List
+    cursor.execute("SELECT full_name FROM users WHERE role = 'doctor' LIMIT 4")
+    raw_doctors = cursor.fetchall()
+    doctor_list = []
+    for d in raw_doctors:
+        doctor_list.append({
+            'name': d[0],
+            'specialty': random.choice(['Heart Specialist', 'Psychology', 'Kid Doctor', 'Dentistry']),
+            'status': random.choice(['Available', 'Leave'])
+        })
+        
+    # Mock Doctors if empty
+    if not doctor_list:
+        doctor_list = [
+            {'name': 'Albert Flores', 'specialty': 'Heart Specialist', 'status': 'Available'},
+            {'name': 'Marvin McKinney', 'specialty': 'Psychology', 'status': 'Leave'},
+            {'name': 'Jenny Wilson', 'specialty': 'Kid Doctor', 'status': 'Available'},
+            {'name': 'Courtney Henry', 'specialty': 'Dentistry', 'status': 'Available'}
+        ]
     
     cursor.close()
     conn.close()
@@ -60,22 +102,17 @@ def dashboard():
         greeting = "Good Afternoon"
     else:
         greeting = "Good Evening"
-        
-    current_date = datetime.now().strftime('%A, %d %B %Y')
     
     return render_template('dashboard.html', 
                            username=session['username'], 
                            role=session['role'],
                            total_patients=total_patients,
-                           total_appointments=total_appointments,
                            total_doctors=total_doctors,
-                           todays_appts=todays_appts,
                            recent_patients=recent_patients,
-                           gender_data=gender_data,
-                           appt_data=appt_data,
-                           greeting=greeting,
-                           current_date=current_date)
+                           doctor_list=doctor_list,
+                           greeting=greeting)
 
+# (Keep all your other routes exactly as they were below this line)
 @main.route('/add_patient', methods=['GET', 'POST'])
 def add_patient():
     if 'user_id' not in session:
@@ -331,7 +368,6 @@ def add_record(patient_id):
     conn.close()
     return render_template('add_record.html', patient=patient, patient_id=patient_id)
 
-# --- NEW COMING SOON ROUTE ---
 @main.route('/coming-soon')
 def coming_soon():
     if 'user_id' not in session:
