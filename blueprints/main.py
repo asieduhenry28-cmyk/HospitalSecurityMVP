@@ -47,12 +47,12 @@ def dashboard():
     cursor.execute("SELECT gender, COUNT(*) FROM patients GROUP BY gender")
     gender_data = cursor.fetchall()
     if not gender_data:
-        gender_data = [('No Data', 1)] # Fallback for chart
+        gender_data = [('No Data', 1)] 
         
     cursor.execute("SELECT status, COUNT(*) FROM appointments GROUP BY status")
     appt_data = cursor.fetchall()
     if not appt_data:
-        appt_data = [('No Data', 1)] # Fallback for chart
+        appt_data = [('No Data', 1)] 
     
     cursor.close()
     conn.close()
@@ -65,6 +65,9 @@ def dashboard():
         greeting = "Good Afternoon"
     else:
         greeting = "Good Evening"
+        
+    # Get formatted date for the top right corner
+    current_date = datetime.now().strftime('%A, %d %B %Y')
     
     return render_template('dashboard.html', 
                            username=session['username'], 
@@ -76,4 +79,5 @@ def dashboard():
                            recent_patients=recent_patients,
                            gender_data=gender_data,
                            appt_data=appt_data,
-                           greeting=greeting)
+                           greeting=greeting,
+                           current_date=current_date) # <-- Passed the date here
