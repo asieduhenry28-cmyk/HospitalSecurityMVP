@@ -4,104 +4,241 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register - Hospital Security MVP</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
+        :root {
+            --primary-color: #3b82f6;
+            --success-color: #10b981;
+            --bg-dark: #0f172a;
+            --bg-light: #1e293b;
+        }
+
         body { 
-            background: linear-gradient(135deg, #0b1a30 0%, #1a365d 100%); 
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-light) 100%);
             min-height: 100vh; 
             display: flex; 
             align-items: center; 
             justify-content: center;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            padding: 20px 0;
+            margin: 0;
+            padding: 20px 0; /* Adds space for scrolling on smaller screens */
+            overflow-x: hidden;
+            position: relative;
         }
+
+        /* Floating Background Shapes */
+        .shape {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: 0;
+            opacity: 0.5;
+        }
+        .shape-1 { width: 400px; height: 400px; background: #3b82f6; top: -100px; left: -100px; animation: float 8s ease-in-out infinite; }
+        .shape-2 { width: 300px; height: 300px; background: #8b5cf6; bottom: -50px; right: -50px; animation: float 10s ease-in-out infinite reverse; }
+        .shape-3 { width: 200px; height: 200px; background: #10b981; top: 40%; left: 60%; animation: float 12s ease-in-out infinite; }
+
+        @keyframes float {
+            0% { transform: translate(0, 0); }
+            50% { transform: translate(30px, 30px); }
+            100% { transform: translate(0, 0); }
+        }
+
+        /* The Modern Card */
         .register-card { 
-            background: white; 
-            border-radius: 15px; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3); 
+            background: rgba(255, 255, 255, 0.98); 
+            border-radius: 24px; 
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); 
             padding: 40px; 
             width: 100%; 
-            max-width: 500px; 
+            max-width: 480px; 
+            position: relative;
+            z-index: 1;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: slideUp 0.6s ease-out;
         }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         .logo-icon {
-            font-size: 50px;
-            color: #3b82f6;
-            margin-bottom: 15px;
+            font-size: 45px;
+            background: linear-gradient(135deg, #10b981, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
         }
+
+        .form-label {
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: #475569;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .input-group-text {
+            background-color: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-right: none;
+            color: #94a3b8;
+            border-radius: 12px 0 0 12px;
+            padding: 0 15px;
+        }
+
         .form-control, .form-select { 
-            border-radius: 8px; 
-            padding: 12px; 
-            border: 1px solid #e2e8f0; 
+            border: 2px solid #e2e8f0; 
+            border-radius: 12px;
+            padding: 12px 15px; 
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            color: #475569;
         }
+
+        .form-control {
+            border-left: none;
+            border-radius: 0 12px 12px 0;
+        }
+
         .form-control:focus, .form-select:focus { 
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3); 
-            border-color: #3b82f6; 
+            box-shadow: none;
+            border-color: var(--success-color);
+            background-color: #fff;
         }
+
+        .input-group:focus-within .input-group-text {
+            border-color: var(--success-color);
+            color: var(--success-color);
+        }
+
+        /* Custom Styling for Select Dropdown */
+        .select-wrapper {
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 2px;
+            transition: all 0.3s ease;
+        }
+        .select-wrapper:focus-within {
+            border-color: var(--success-color);
+        }
+        .select-wrapper .form-select {
+            border: none;
+            box-shadow: none;
+        }
+
+        /* Gradient Button */
         .btn-success { 
-            background-color: #10b981; 
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
             border: none; 
-            border-radius: 8px; 
-            padding: 12px; 
-            font-weight: bold; 
+            border-radius: 12px; 
+            padding: 14px; 
+            font-weight: 600; 
+            font-size: 1rem;
             width: 100%;
-            transition: 0.3s;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
         }
+
         .btn-success:hover { 
-            background-color: #059669; 
             transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.6);
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+        }
+
+        .link-text {
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        .link-text:hover { color: #2563eb !important; }
+
+        .alert {
+            border-radius: 12px;
+            font-size: 0.85rem;
+            border: none;
+            font-weight: 500;
         }
     </style>
 </head>
 <body>
 
-    <div class="register-card text-center">
-        <i class="fa-solid fa-user-plus logo-icon"></i>
-        <h3 class="fw-bold mb-1">Create Account</h3>
-        <p class="text-muted mb-4">Join the Hospital Management System</p>
+    <!-- Floating Background Shapes -->
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+    <div class="shape shape-3"></div>
+
+    <div class="register-card">
+        <div class="text-center mb-4">
+            <i class="fa-solid fa-user-plus logo-icon"></i>
+            <h3 class="fw-bold mb-1" style="color: #1e293b;">Create Account</h3>
+            <p class="text-muted" style="font-size: 0.9rem;">Join the Hospital Management System</p>
+        </div>
         
+        <!-- Flash Messages -->
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 {% for category, message in messages %}
-                    <div class="alert alert-{{ 'success' if category == 'success' else 'danger' }} py-2" role="alert">
-                        <small>{{ message }}</small>
+                    <div class="alert alert-{{ 'success' if category == 'success' else 'danger' }} text-center" role="alert">
+                        <i class="fa-solid {{ 'fa-check-circle' if category == 'success' else 'fa-exclamation-circle' }} me-2"></i>
+                        {{ message }}
                     </div>
                 {% endfor %}
             {% endif %}
         {% endwith %}
 
-        <form method="POST" action="/register" class="text-start">
+        <form method="POST" action="/register">
             <div class="mb-3">
-                <label class="form-label fw-bold text-muted small">Full Name</label>
-                <input type="text" name="full_name" class="form-control" placeholder="e.g. Dr. John Doe" required>
+                <label class="form-label">Full Name</label>
+                <div class="input-group shadow-sm">
+                    <span class="input-group-text"><i class="fa-solid fa-id-card"></i></span>
+                    <input type="text" name="full_name" class="form-control" placeholder="e.g. Dr. John Doe" required>
+                </div>
             </div>
 
             <div class="mb-3">
-                <label class="form-label fw-bold text-muted small">Username</label>
-                <input type="text" name="username" class="form-control" placeholder="Choose a unique username" required>
+                <label class="form-label">Username</label>
+                <div class="input-group shadow-sm">
+                    <span class="input-group-text"><i class="fa-solid fa-user"></i></span>
+                    <input type="text" name="username" class="form-control" placeholder="Choose a unique username" required>
+                </div>
             </div>
 
             <div class="mb-3">
-                <label class="form-label fw-bold text-muted small">Password</label>
-                <input type="password" name="password" class="form-control" placeholder="Create a strong password" required>
+                <label class="form-label">Password</label>
+                <div class="input-group shadow-sm">
+                    <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
+                    <input type="password" name="password" class="form-control" placeholder="Create a strong password" required>
+                </div>
             </div>
 
             <div class="mb-4">
-                <label class="form-label fw-bold text-muted small">System Role</label>
-                <select name="role" class="form-select" required>
-                    <option value="" disabled selected>Select your role...</option>
-                    <option value="receptionist">Receptionist</option>
-                    <option value="doctor">Doctor</option>
-                    <option value="admin">Administrator</option>
-                </select>
+                <label class="form-label">System Role</label>
+                <div class="select-wrapper shadow-sm">
+                    <select name="role" class="form-select" required>
+                        <option value="" disabled selected>Select your role...</option>
+                        <option value="receptionist">Receptionist</option>
+                        <option value="doctor">Doctor</option>
+                        <option value="admin">Administrator</option>
+                    </select>
+                </div>
             </div>
 
-            <button type="submit" class="btn btn-success mb-3">Register Account</button>
+            <button type="submit" class="btn btn-success mb-4">Register Account</button>
         </form>
         
-        <div class="mt-3 small">
-            <span class="text-muted">Already have an account?</span>
-            <a href="/login" class="text-decoration-none text-primary fw-bold ms-1">Sign In</a>
+        <div class="text-center mt-2">
+            <span class="text-muted link-text">Already have an account?</span>
+            <a href="/login" class="text-decoration-none link-text text-primary fw-bold ms-1">Sign In</a>
         </div>
     </div>
 
